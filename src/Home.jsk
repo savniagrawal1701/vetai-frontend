@@ -1,1 +1,15 @@
+import React from 'react';
+export default function Home({onGo}){
+  return (
+    <div className="card">
+      <h1>Vet AI — Cow Disease Detector</h1>
+      <p>Use AI Analysis to upload a cow image, enter temperature and symptoms to get a prediction.</p>
+      <div style={{display:'flex',gap:12,marginTop:18}}>
+        <button onClick={onGo} style={{padding:'10px 16px',borderRadius:8,border:'none',background:'#7c3aed',color:'white',cursor:'pointer'}}>AI Analysis</button>
+        <a href="#" style={{padding:'10px 16px',borderRadius:8,background:'#06b6d4',color:'white',textDecoration:'none'}}>About</a>
+      </div>
+      <img className="preview-img" src="/sample_home.png" alt="preview" />
+    </div>
+  )
+}
 
