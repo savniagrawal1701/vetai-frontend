@@ -1,1 +1,55 @@
+import React, {useState} from 'react';
+export default function AIAnalysis(){
+  const [file, setFile] = useState(null);
+  const [temperature, setTemperature] = useState('');
+  const [symptoms, setSymptoms] = useState([]);
+  const [result, setResult] = useState(null);
+  const symptomOptions = ["Fever","Lameness","Watery/Cloudy Eyes","Coughing","Foot Swelling","Loss of Appetite"];
+
+  const toggle = (s)=>setSymptoms(prev=> prev.includes(s)? prev.filter(x=>x!==s): [...prev,s]);
+
+  const handleSubmit = async ()=>{
+    if(!file){ alert('Please select an image'); return; }
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('temperature', temperature);
+    fd.append('symptoms', JSON.stringify(symptoms));
+    // Replace this URL with your deployed backend URL after deploying
+    const API = 'https://vet-ai-backend-0de9.onrender.com';
+    try{
+      const res = await fetch(API, { method:'POST', body: fd });
+      const data = await res.json();
+      setResult(data);
+    }catch(err){
+      alert('Error calling API. Make sure backend is deployed and the URL is correct.');
+      console.error(err);
+    }
+  }
+
+  return (
+    <div className="card">
+      <h2>AI Analysis</h2>
+      <label>Upload cow image</label><br/>
+      <input type="file" accept="image/*" onChange={e=>setFile(e.target.files[0])} /><br/><br/>
+      <label>Temperature (°C)</label><br/>
+      <input value={temperature} onChange={e=>setTemperature(e.target.value)} placeholder="e.g. 39.5" /><br/><br/>
+      <label>Symptoms</label>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:8}}>
+        {symptomOptions.map(s=>(
+          <label key={s}><input type="checkbox" checked={symptoms.includes(s)} onChange={()=>toggle(s)} /> {s}</label>
+        ))}
+      </div>
+      <div style={{marginTop:16}}>
+        <button onClick={handleSubmit} style={{padding:'10px 16px',borderRadius:8,background:'#0ea5a4',color:'white',border:'none'}}>Analyze</button>
+      </div>
+      {result && (
+        <div style={{marginTop:16,background:'#ecfccb',padding:12,borderRadius:8}}>
+          <strong>Prediction:</strong> {result.prediction} <br/>
+          <strong>Temp:</strong> {result.temperature} <br/>
+          <strong>Symptoms:</strong> {result.symptoms}
+        </div>
+      )}
+    </div>
+  )
+}
 
